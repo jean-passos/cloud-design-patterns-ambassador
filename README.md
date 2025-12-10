@@ -2,5 +2,4 @@ Instruções iniciais do setup de teste local
 
 1. Ter o docker instalado
 2. Ativar o kubernetes do docker
-3. Instalar o dapr cli (https://docs.dapr.io/getting-started/install-dapr-cli)
-4. Inicializar o dapr no cluster
+3. Instalar e configurar o dapr cli (https://docs.dapr.io/getting-started/install-dapr-cli)
