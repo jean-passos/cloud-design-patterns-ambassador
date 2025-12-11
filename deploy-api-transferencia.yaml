@@ -1,0 +1,41 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-api-transferencia
+  labels:
+    app: api-transferencia
+spec:
+  selector:
+    app: api-transferencia
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: deployment-api-transferencia
+  labels:
+    app: api-transferencia
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-transferencia
+  template:
+    metadata:
+      labels:
+        app: api-transferencia
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "api-transferencia"
+        dapr.io/app-port: "8080"
+        dapr.io/enable-api-logging: "true"
+    spec:
+      containers:
+      - name: api-transferencia
+        image: api-transferencia:latest
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: IfNotPresent

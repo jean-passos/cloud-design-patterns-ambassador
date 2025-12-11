@@ -1,0 +1,18 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: api-transferencia
+  labels:
+    app.kubernetes.io/name: api-transferencia
+  annotations:
+    dapr.io/enabled: "true"
+    dapr.io/app-id: "api-transferencia"
+    dapr.io/app-port: "3000"
+    dapr.io/enable-api-logging: "true"
+spec:
+  containers:
+  - name: api-transferencia
+    image: api-transferencia:latest
+    imagePullPolicy: IfNotPresent
+    ports:
+      - containerPort: 8080

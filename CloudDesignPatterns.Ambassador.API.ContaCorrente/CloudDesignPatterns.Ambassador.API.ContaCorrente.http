@@ -1,0 +1,6 @@
+@CloudDesignPatterns.Ambassador.API.ContaCorrente_HostAddress = http://localhost:5183
+
+GET {{CloudDesignPatterns.Ambassador.API.ContaCorrente_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

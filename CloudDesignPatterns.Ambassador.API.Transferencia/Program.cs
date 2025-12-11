@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1",
         Title = "Transferencia",
         Description = "Operações de Transferencia Bancária"
-         
+
     });
 
 });
@@ -24,19 +24,10 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddSingleton<ITransferenciaTED, TransferenciaTED>();
 
-
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(options => {
-    });
-}
-
-app.UseHttpsRedirection();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseAuthorization();
 
