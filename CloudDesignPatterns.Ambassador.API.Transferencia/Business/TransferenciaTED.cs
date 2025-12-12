@@ -8,11 +8,20 @@ namespace CloudDesignPatterns.Ambassador.API.Transferencia.Business
 {
     public class TransferenciaTED : ITransferenciaTED
     {
+        private readonly ILogger _logger;
+        public TransferenciaTED(ILogger<TransferenciaTED> logger)
+        {
+                _logger = logger;
+        }
         public async Task<string> RealizaTransferencia(EntityTED transferenciaTED)
         {
             HttpClient httpClient = new HttpClient 
             {
+                // use this method calling direct api via resource ORRR
                 //BaseAddress = new Uri("http://localhost:3500/v1.0/invoke/api-contacorrente/method/")
+
+                // this to abstract the complex URIs
+                //  but in that way it's necessary add header "dapr-app-id"
                 BaseAddress = new Uri("http://localhost:3500/")
             };
             
@@ -25,7 +34,7 @@ namespace CloudDesignPatterns.Ambassador.API.Transferencia.Business
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, rota);
             httpRequestMessage.Headers.Add("dapr-app-id", "api-contacorrente");
 
-            Console.WriteLine(httpRequestMessage.ToString());
+            _logger.LogInformation(httpRequestMessage.ToString());
 
             var retorno = await httpClient.SendAsync(httpRequestMessage);
 
@@ -35,7 +44,7 @@ namespace CloudDesignPatterns.Ambassador.API.Transferencia.Business
             {
                 string jsonRetorno = await retorno.Content.ReadAsStringAsync();
 
-                Console.WriteLine(jsonRetorno);
+                _logger.LogInformation(jsonRetorno);
 
                 contaCorrenteSaldo = JsonSerializer.Deserialize<ResponseContaCorrenteSaldo>(jsonRetorno)!;
 
