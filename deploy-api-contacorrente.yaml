@@ -1,0 +1,41 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-api-contacorrente
+  labels:
+    app: api-contacorrente
+spec:
+  selector:
+    app: api-contacorrente
+  type: LoadBalancer
+  ports:
+  - port: 8088
+    targetPort: 8080
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: deployment-api-contacorrente
+  labels:
+    app: api-contacorrente
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-contacorrente
+  template:
+    metadata:
+      labels:
+        app: api-contacorrente
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "api-contacorrente"
+        dapr.io/app-port: "8080"
+        dapr.io/enable-api-logging: "true"
+    spec:
+      containers:
+      - name: api-contacorrente
+        image: api-contacorrente:latest
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: IfNotPresent
