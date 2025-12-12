@@ -2,5 +2,6 @@
 {
     public class EntityTED
     {
+        public decimal ValorTransferencia { get; set; }
     }
 }
