@@ -1,0 +1,36 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-servico-transferencia
+  labels:
+    app: servico-transferencia
+spec:
+  selector:
+    app: servico-transferencia
+  type: LoadBalancer
+  ports:
+  - port: 6001
+    targetPort: 8080
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: deployment-servico-transferencia
+  labels:
+    app: servico-transferencia
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: servico-transferencia
+  template:
+    metadata:
+      labels:
+        app: servico-transferencia
+    spec:
+      containers:
+      - name: servico-transferencia
+        image: servico-transferencia:latest
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: IfNotPresent
