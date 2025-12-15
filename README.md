@@ -12,5 +12,8 @@ docker run -p [HOST_PORT]:[CONTAINER_PORT] [IMAGE_NAME]
 * CONTAINER_PORT: Porta exposta pelo container
 ---
 Quando voce tiver no ambiente do k8s o certo vai ser dois containeres no mesmo pod pra fazer o intermedio!
-
-
+---
+Nos deployments do k8s as portas expostas localmente para teste sao
+9001: api-transferencia
+9002: api-contacorrente
+9101: servico-transferencia
