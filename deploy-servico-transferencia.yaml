@@ -9,7 +9,7 @@ spec:
     app: servico-transferencia
   type: LoadBalancer
   ports:
-  - port: 6001
+  - port: 9101
     targetPort: 8080
 ---
 kind: Deployment
