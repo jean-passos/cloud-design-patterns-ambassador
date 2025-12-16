@@ -29,22 +29,23 @@ namespace CloudDesignPatterns.Ambassador.API.Transferencia.Business
 
         private async Task<decimal> ObterSaldoContaCorrente(string documento, string nro_conta)
         {
-            var httpContaCorrenteClient = _httpClientFactory.CreateClient("api-contacorrente");
-
-            string rota = $"api-contacorrente/saldo/{documento}/{nro_conta}";
-
-            var retorno = await httpContaCorrenteClient.GetAsync(rota);
-
-            ResponseContaCorrenteSaldo contaCorrenteSaldo;
-            if (retorno.StatusCode == HttpStatusCode.OK)
+            using (var httpContaCorrenteClient = _httpClientFactory.CreateClient("api-contacorrente"))
             {
-                string jsonRetorno = await retorno.Content.ReadAsStringAsync();
-                contaCorrenteSaldo = JsonSerializer.Deserialize<ResponseContaCorrenteSaldo>(jsonRetorno)!;
-                return contaCorrenteSaldo.SaldoDisponivel;
-            }
-            else
-            {
-                return 0;
+                string rota = $"api-contacorrente/saldo/{documento}/{nro_conta}";
+
+                var retorno = await httpContaCorrenteClient.GetAsync(rota);
+
+                ResponseContaCorrenteSaldo contaCorrenteSaldo;
+                if (retorno.StatusCode == HttpStatusCode.OK)
+                {
+                    string jsonRetorno = await retorno.Content.ReadAsStringAsync();
+                    contaCorrenteSaldo = JsonSerializer.Deserialize<ResponseContaCorrenteSaldo>(jsonRetorno)!;
+                    return contaCorrenteSaldo.SaldoDisponivel;
+                }
+                else
+                {
+                    return 0;
+                } 
             }
         }
 
