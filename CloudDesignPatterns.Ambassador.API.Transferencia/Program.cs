@@ -23,7 +23,19 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 
+
 builder.Services.AddSingleton<ITransferenciaTED, TransferenciaTED>();
+builder.Services.AddHttpClient<TransferenciaTED>("api-contacorrente", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:3500/");
+    client.DefaultRequestHeaders.Add("dapr-app-id", "api-contacorrente");
+});
+
+builder.Services.AddHttpClient("service-transferencia", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:3500/v1.0/invoke/httpenpoint-service-transferencia/method/");
+});
+
 
 var app = builder.Build();
 

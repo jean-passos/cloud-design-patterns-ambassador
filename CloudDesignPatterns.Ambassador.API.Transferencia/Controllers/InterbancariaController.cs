@@ -6,11 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CloudDesignPatterns.Ambassador.API.Transferencia.Controllers
 {
-    [Route("api-transferencia/interbancaria")]
+    [Route("api-transferencia")]
     [ApiController]
     public class InterbancariaController : ControllerBase
     {
-
         private ITransferenciaTED _transferenciaTED;
 
         public InterbancariaController(ITransferenciaTED transferenciaTED)
@@ -18,21 +17,27 @@ namespace CloudDesignPatterns.Ambassador.API.Transferencia.Controllers
             _transferenciaTED = transferenciaTED;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="requestTED"></param>
-        /// <returns></returns>
-        [HttpPost("ted")]
-        public async Task<AcceptedResult> TransferenciaInterbancaria([FromBody]RequestTED requestTED)
+        [HttpPost("outra-instituicao")]
+        public async Task<IActionResult> TransferenciaInterbancaria([FromBody]RequestTED requestTED)
         {
-            EntityTED entityTED = new EntityTED
+            CreditoTED credito = new CreditoTED
             {
-                ValorTransferencia = requestTED.ValorTransferencia
+                InstituicaoCredito = requestTED.ContaCredito.InstituicaoRecebedor,
+                DocumentoCredito = requestTED.ContaCredito.DocumentoRecebedor,
+                AgenciaCredito = requestTED.ContaCredito.AgenciaRecebedor,
+                NroContaCredito = requestTED.ContaCredito.NroContaRecebedor,
+                ValorTransferencia = requestTED.ContaCredito.ValorTransferencia
             };
 
-            entityTED = await _transferenciaTED.RealizaTransferencia(entityTED);
-            ResponseTED response = new ResponseTED { IdentificadorTransferencia = entityTED.IdentificadorTransferencia };
+            DebitoTED debito = new DebitoTED
+            {
+                DocumentoCorrentista = requestTED.ContaDebito.DocumentoCorrentista,
+                NroContaCorrentista = requestTED.ContaDebito.NroConta
+            };
+
+            await _transferenciaTED.RealizaTransferencia(debito, credito);
+
+            ResponseTED response = new ResponseTED { IdentificadorTransferencia = _transferenciaTED.CodigoTransferencia };
             return Accepted(response);
         }
     }

@@ -4,7 +4,7 @@ namespace CloudDesignPatterns.Ambassador.API.Transferencia.Model.Response
 {
     public class ResponseTED
     {
-        [JsonPropertyName("identificador-transferencia")]
+        [JsonPropertyName("identificadorTransferencia")]
         public string IdentificadorTransferencia { get; set; } 
     }
 }

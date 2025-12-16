@@ -10,91 +10,86 @@ namespace CloudDesignPatterns.Ambassador.API.Transferencia.Business
 {
     public class TransferenciaTED : ITransferenciaTED
     {
+        public string? CodigoTransferencia { get; private set; }
+
         private readonly ILogger _logger;
-        public TransferenciaTED(ILogger<TransferenciaTED> logger)
+        private readonly IHttpClientFactory _httpClientFactory;
+        public TransferenciaTED(ILogger<TransferenciaTED> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
+            _httpClientFactory = httpClientFactory;
         }
-        public async Task<EntityTED> RealizaTransferencia(EntityTED transferenciaTED)
+
+        public async Task RealizaTransferencia(DebitoTED debito, CreditoTED credito)
         {
-            HttpClient httpClient = new HttpClient
-            {
-                // use this method calling direct api via resource ORRR
-                //BaseAddress = new Uri("http://localhost:3500/v1.0/invoke/api-contacorrente/method/")
+            decimal saldoDisponivel = await ObterSaldoContaCorrente(debito.DocumentoCorrentista, debito.NroContaCorrentista);
+            if (saldoDisponivel >= credito.ValorTransferencia)
+                CodigoTransferencia = await RealizarTransferenciaTED(credito);
+        }
 
-                // this to abstract the complex URIs
-                //  but in that way it's necessary add header "dapr-app-id"
-                BaseAddress = new Uri("http://localhost:3500/")
-            };
-
-            string documento = "12345678932";
-            string nro_conta = "987654321";
+        private async Task<decimal> ObterSaldoContaCorrente(string documento, string nro_conta)
+        {
+            var httpContaCorrenteClient = _httpClientFactory.CreateClient("api-contacorrente");
 
             string rota = $"api-contacorrente/saldo/{documento}/{nro_conta}";
 
-            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, rota);
-            httpRequestMessage.Headers.Add("dapr-app-id", "api-contacorrente");
-
-            _logger.LogInformation(httpRequestMessage.ToString());
-
-            var retorno = await httpClient.SendAsync(httpRequestMessage);
+            var retorno = await httpContaCorrenteClient.GetAsync(rota);
 
             ResponseContaCorrenteSaldo contaCorrenteSaldo;
-
             if (retorno.StatusCode == HttpStatusCode.OK)
             {
                 string jsonRetorno = await retorno.Content.ReadAsStringAsync();
-
-                _logger.LogInformation(jsonRetorno);
-
                 contaCorrenteSaldo = JsonSerializer.Deserialize<ResponseContaCorrenteSaldo>(jsonRetorno)!;
-
-                if (contaCorrenteSaldo != null && contaCorrenteSaldo.SaldoDisponivel >= transferenciaTED.ValorTransferencia)
-                {
-
-                    httpClient = new HttpClient
-                    {
-                        BaseAddress = new Uri("http://localhost:3500/v1.0/invoke/httpenpoint-service-transferencia/method/")
-                    };
-                    httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "");
-
-                    XNamespace soapenv = "http://schemas.xmlsoap.org/soap/envelope/";
-                    XNamespace ser = "http://ServicoTransferencia.TED/";
-                    XNamespace req = "http://schemas.datacontract.org/2004/07/RequestTransferenciaTED.Data";
-
-                    XDocument xDocument = new XDocument(
-                        new XElement(soapenv + "Envelope",
-                            new XAttribute(XNamespace.Xmlns + "soapenv", soapenv),
-                            new XAttribute(XNamespace.Xmlns + "ser", ser),
-                            new XAttribute(XNamespace.Xmlns + "req", req),
-                            new XElement(soapenv + "Header"),
-                            new XElement(soapenv + "Body",
-                                new XElement(ser + "RealizaTransferenciaTED",
-                                    new XElement(ser + "requestTransferencia",
-                                        new XElement(req + "AgenciaDestino", "0001"),
-                                        new XElement(req + "ContaDestino", nro_conta),
-                                        new XElement(req + "DocumentoBeneficiario", documento),
-                                        new XElement(req + "InstituicaoDetino", "001"),
-                                        new XElement(req + "ValorTransferencia", transferenciaTED.ValorTransferencia)
-                                    )
-                                )
-                            )
-                        ));
-
-                    string xmlString = xDocument.ToString();
-
-                    httpRequestMessage.Headers.Add("SOAPAction", "RealizaTransferenciaTED");
-                    httpRequestMessage.Content = new StringContent(xmlString);
-                    var responseMessageSoap = await httpClient.SendAsync(httpRequestMessage)!;
-                    var xmlRetorno = await responseMessageSoap.Content.ReadAsStringAsync();
-
-                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(Envelope));
-                    var deserializedResultXml = xmlSerializer.Deserialize(new StringReader(xmlRetorno)) as Envelope;
-
-                    transferenciaTED.IdentificadorTransferencia = deserializedResultXml!.Body.ResponseServicoTransfernciaTED.CodigoTransferencia;
-                }
+                return contaCorrenteSaldo.SaldoDisponivel;
             }
-            return transferenciaTED;
+            else
+            {
+                return 0;
+            }
         }
+
+        private async Task<string> RealizarTransferenciaTED(CreditoTED credito)
+        {
+            string xmlString = CreateSoapRequest(credito).ToString();
+            Envelope? deserializedResultXml;
+            using (var httpServicoTransferenciaClient = _httpClientFactory.CreateClient("service-transferencia"))
+            {
+                httpServicoTransferenciaClient.DefaultRequestHeaders.Add("SOAPAction", "RealizaTransferenciaTED");
+                HttpResponseMessage responseMessageSoap = await httpServicoTransferenciaClient.PostAsync("", new StringContent(xmlString));
+                string xmlRetorno = await responseMessageSoap.Content.ReadAsStringAsync();
+
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Envelope));
+                deserializedResultXml = xmlSerializer.Deserialize(new StringReader(xmlRetorno)) as Envelope;
+            }
+            return deserializedResultXml!.Body.ResponseServicoTransfernciaTED.CodigoTransferencia;
+        }
+
+        private XDocument CreateSoapRequest(CreditoTED credito)
+        {
+            XNamespace soapenv = "http://schemas.xmlsoap.org/soap/envelope/";
+            XNamespace ser = "http://ServicoTransferencia.TED/";
+            XNamespace req = "http://schemas.datacontract.org/2004/07/RequestTransferenciaTED.Data";
+            XDocument xDocument = new XDocument(
+                new XElement(soapenv + "Envelope",
+                    new XAttribute(XNamespace.Xmlns + "soapenv", soapenv),
+                    new XAttribute(XNamespace.Xmlns + "ser", ser),
+                    new XAttribute(XNamespace.Xmlns + "req", req),
+                    new XElement(soapenv + "Header"),
+                    new XElement(soapenv + "Body",
+                        new XElement(ser + "RealizaTransferenciaTED",
+                            new XElement(ser + "requestTransferencia",
+                                new XElement(req + "AgenciaDestino", credito.AgenciaCredito),
+                                new XElement(req + "ContaDestino", credito.NroContaCredito),
+                                new XElement(req + "DocumentoBeneficiario", credito.DocumentoCredito),
+                                new XElement(req + "InstituicaoDetino", credito.InstituicaoCredito),
+                                new XElement(req + "ValorTransferencia", credito.ValorTransferencia)
+                            )
+                        )
+                    )
+                ));
+            return xDocument;
+        }
+
+
     }
 }

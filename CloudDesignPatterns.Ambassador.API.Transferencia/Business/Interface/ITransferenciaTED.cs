@@ -5,6 +5,7 @@ namespace CloudDesignPatterns.Ambassador.API.Transferencia.Business.Interface
 {
     public interface ITransferenciaTED
     {
-        public Task<EntityTED> RealizaTransferencia(EntityTED transferenciaTED);
+        string? CodigoTransferencia { get; }
+        public Task RealizaTransferencia(DebitoTED debito, CreditoTED credito);
     }
 }
