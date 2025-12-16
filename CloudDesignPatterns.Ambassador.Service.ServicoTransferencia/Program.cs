@@ -8,7 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddServiceModelServices();
 builder.Services.AddServiceModelMetadata();
-builder.Services.AddSingleton<IServiceBehavior, UseRequestHeadersForMetadataAddressBehavior>();
+builder.Services.AddSingleton<IServiceBehavior, ServiceDebugBehavior>(behavior =>
+{
+    var debugBehavior = new ServiceDebugBehavior
+    {
+        IncludeExceptionDetailInFaults = true
+    };
+    return debugBehavior;
+});
 
 var app = builder.Build();
 

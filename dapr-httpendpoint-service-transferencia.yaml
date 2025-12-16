@@ -1,0 +1,9 @@
+apiVersion: dapr.io/v1alpha1
+kind: HTTPEndpoint
+metadata:
+  name: httpenpoint-service-transferencia
+spec:
+  baseUrl: http://svc-servico-transferencia.default:9101/TransferenciaTEDService.svc
+  headers:
+  - name: Content-Type
+    value: text/xml; charset=utf-8

@@ -7,7 +7,7 @@ namespace CloudDesignPatterns.Ambassador.Service.ServicoTransferencia
     {
         public string RealizaTransferenciaTED(RequestTransferenciaTED requestTransferencia)
         {
-            throw new NotImplementedException();
+            return "STR0123456789";
         }
     }
 }

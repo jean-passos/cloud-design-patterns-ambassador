@@ -3,10 +3,10 @@ using CoreWCF;
 
 namespace CloudDesignPatterns.Ambassador.Service.ServicoTransferencia.Contract
 {
-    [ServiceContract]
+    [ServiceContract(Namespace = "http://ServicoTransferencia.TED/")]
     public interface ITransferenciaTED
     {
-        [OperationContract]
+        [OperationContract (Action = "RealizaTransferenciaTED")] 
         string RealizaTransferenciaTED(RequestTransferenciaTED requestTransferencia);
     }
 }

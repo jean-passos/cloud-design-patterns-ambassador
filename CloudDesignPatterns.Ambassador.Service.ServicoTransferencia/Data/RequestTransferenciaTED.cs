@@ -2,7 +2,7 @@
 
 namespace CloudDesignPatterns.Ambassador.Service.ServicoTransferencia.Data
 {
-    [DataContract]
+    [DataContract(Namespace = "http://schemas.datacontract.org/2004/07/RequestTransferenciaTED.Data")]
     public class RequestTransferenciaTED
     {
         [DataMember]

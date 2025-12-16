@@ -32,7 +32,7 @@ spec:
         dapr.io/app-id: "api-transferencia"
         dapr.io/app-port: "8080"
         dapr.io/enable-api-logging: "true"
-        dapr.io/log-level: "info"
+        dapr.io/log-level: "debug"
     spec:
       containers:
       - name: api-transferencia
