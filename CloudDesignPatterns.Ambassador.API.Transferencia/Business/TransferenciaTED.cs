@@ -4,6 +4,7 @@ using CloudDesignPatterns.Ambassador.API.Transferencia.Model.Response;
 using System.Net;
 using System.Text.Json;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace CloudDesignPatterns.Ambassador.API.Transferencia.Business
 {
@@ -14,7 +15,7 @@ namespace CloudDesignPatterns.Ambassador.API.Transferencia.Business
         {
             _logger = logger;
         }
-        public async Task<string> RealizaTransferencia(EntityTED transferenciaTED)
+        public async Task<EntityTED> RealizaTransferencia(EntityTED transferenciaTED)
         {
             HttpClient httpClient = new HttpClient
             {
@@ -25,7 +26,6 @@ namespace CloudDesignPatterns.Ambassador.API.Transferencia.Business
                 //  but in that way it's necessary add header "dapr-app-id"
                 BaseAddress = new Uri("http://localhost:3500/")
             };
-
 
             string documento = "12345678932";
             string nro_conta = "987654321";
@@ -82,19 +82,19 @@ namespace CloudDesignPatterns.Ambassador.API.Transferencia.Business
                         ));
 
                     string xmlString = xDocument.ToString();
-                    
-                    Console.WriteLine(xmlString);
 
                     httpRequestMessage.Headers.Add("SOAPAction", "RealizaTransferenciaTED");
                     httpRequestMessage.Content = new StringContent(xmlString);
-                    var codigo = await httpClient.SendAsync(httpRequestMessage)!;
+                    var responseMessageSoap = await httpClient.SendAsync(httpRequestMessage)!;
+                    var xmlRetorno = await responseMessageSoap.Content.ReadAsStringAsync();
 
-                    Console.WriteLine("======================================================");
-                    Console.WriteLine(codigo);
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(Envelope));
+                    var deserializedResultXml = xmlSerializer.Deserialize(new StringReader(xmlRetorno)) as Envelope;
 
+                    transferenciaTED.IdentificadorTransferencia = deserializedResultXml!.Body.ResponseServicoTransfernciaTED.CodigoTransferencia;
                 }
             }
-            return "STR.......";
+            return transferenciaTED;
         }
     }
 }

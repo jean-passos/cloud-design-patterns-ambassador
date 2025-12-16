@@ -1,4 +1,5 @@
 ﻿using CloudDesignPatterns.Ambassador.API.Transferencia.Business.Interface;
+using CloudDesignPatterns.Ambassador.API.Transferencia.Model.Entity;
 using CloudDesignPatterns.Ambassador.API.Transferencia.Model.Request;
 using CloudDesignPatterns.Ambassador.API.Transferencia.Model.Response;
 using Microsoft.AspNetCore.Mvc;
@@ -25,10 +26,13 @@ namespace CloudDesignPatterns.Ambassador.API.Transferencia.Controllers
         [HttpPost("ted")]
         public async Task<AcceptedResult> TransferenciaInterbancaria([FromBody]RequestTED requestTED)
         {
-            string identificadorTransferencia = await _transferenciaTED.RealizaTransferencia(new Model.Entity.EntityTED());
+            EntityTED entityTED = new EntityTED
+            {
+                ValorTransferencia = requestTED.ValorTransferencia
+            };
 
-            ResponseTED response = new ResponseTED { IdentificadorTransferencia = identificadorTransferencia };
-
+            entityTED = await _transferenciaTED.RealizaTransferencia(entityTED);
+            ResponseTED response = new ResponseTED { IdentificadorTransferencia = entityTED.IdentificadorTransferencia };
             return Accepted(response);
         }
     }

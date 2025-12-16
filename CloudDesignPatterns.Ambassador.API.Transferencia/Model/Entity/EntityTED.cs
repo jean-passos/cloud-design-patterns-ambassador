@@ -2,6 +2,7 @@
 {
     public class EntityTED
     {
+        public string IdentificadorTransferencia { get; set; }
         public decimal ValorTransferencia { get; set; }
     }
 }
