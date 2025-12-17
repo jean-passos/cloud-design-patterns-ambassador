@@ -7,7 +7,7 @@ namespace CloudDesignPatterns.Ambassador.Service.ServicoTransferencia
     {
         public string RealizaTransferenciaTED(RequestTransferenciaTED requestTransferencia)
         {
-            return "STR0123456789";
+            return Guid.NewGuid().ToString("N").ToUpper().Substring(0, 15);
         }
     }
 }
