@@ -3,6 +3,7 @@ using CloudDesignPatterns.Ambassador.Service.ServicoTransferencia.Contract;
 using CoreWCF;
 using CoreWCF.Configuration;
 using CoreWCF.Description;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,9 +18,26 @@ builder.Services.AddSingleton<IServiceBehavior, ServiceDebugBehavior>(behavior =
     return debugBehavior;
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+    {
+        return RateLimitPartition.GetFixedWindowLimiter("GlobalLimiter", _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 10,
+            Window = TimeSpan.FromMinutes(1),
+            QueueLimit = 0
+        });
+    });
+    options.RejectionStatusCode = 429;
+});
+
 var app = builder.Build();
 
-app.UseServiceModel(builder => { 
+app.UseRateLimiter();
+
+app.UseServiceModel(builder =>
+{
 
     builder.AddService<TransferenciaTEDService>();
     builder.AddServiceEndpoint<TransferenciaTEDService, ITransferenciaTED>(new BasicHttpBinding(), "/TransferenciaTEDService.svc");
@@ -28,5 +46,9 @@ app.UseServiceModel(builder => {
     var serviceMetadataBehavior = app.Services.GetRequiredService<ServiceMetadataBehavior>();
     serviceMetadataBehavior.HttpGetEnabled = true;
 });
+
+
+
+
 
 app.Run();
