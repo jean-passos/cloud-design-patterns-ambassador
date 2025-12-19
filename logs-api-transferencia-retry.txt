@@ -1,0 +1,20 @@
+info: CloudDesignPatterns.Ambassador.API.Transferencia.Business.TransferenciaTED[0]
+      Method: GET, RequestUri: 'api-contacorrente/saldo/11122233344/0123456789', Version: 1.1, Content: <null>, Headers:
+      {
+      }
+info: System.Net.Http.HttpClient.api-contacorrente.LogicalHandler[100]
+      Start processing HTTP request GET http://localhost:3500/api-contacorrente/saldo/11122233344/0123456789
+info: System.Net.Http.HttpClient.api-contacorrente.ClientHandler[100]
+      Sending HTTP request GET http://localhost:3500/api-contacorrente/saldo/11122233344/0123456789
+info: System.Net.Http.HttpClient.api-contacorrente.ClientHandler[101]
+      Received HTTP response headers after 9018.7329ms - 200
+info: System.Net.Http.HttpClient.api-contacorrente.LogicalHandler[101]
+      End processing HTTP request after 9018.8184ms - 200
+info: System.Net.Http.HttpClient.service-transferencia.LogicalHandler[100]
+      Start processing HTTP request POST http://localhost:3500/v1.0/invoke/httpenpoint-service-transferencia/method/
+info: System.Net.Http.HttpClient.service-transferencia.ClientHandler[100]
+      Sending HTTP request POST http://localhost:3500/v1.0/invoke/httpenpoint-service-transferencia/method/
+info: System.Net.Http.HttpClient.service-transferencia.ClientHandler[101]
+      Received HTTP response headers after 1.8707ms - 200
+info: System.Net.Http.HttpClient.service-transferencia.LogicalHandler[101]
+      End processing HTTP request after 1.9658ms - 200

@@ -1,0 +1,61 @@
+time="2025-12-19T17:32:33.266815821Z" 
+	level=debug 
+	msg="Found Endpoint Policy for api-contacorrente: {Timeout:waitResponseTimeDefault Retry:retry429Response CircuitBreaker:}" 
+	app_id=api-transferencia 
+	instance=deployment-api-transferencia-6cd99bb649-khljm 
+	scope=dapr.runtime 
+	type=log 
+	ver=1.16.4
+	
+time="2025-12-19T17:32:33.268247564Z" 
+	level=warning 
+	msg="Error processing operation endpoint[api-contacorrente, api-contacorrente:api-contacorrente/saldo/11122233344/0123456789]. Retrying in 1s…" 
+	app_id=api-transferencia 
+	instance=deployment-api-transferencia-6cd99bb649-khljm 
+	scope=dapr.runtime 
+	type=log 
+	ver=1.16.4
+	
+time="2025-12-19T17:32:33.268277798Z" 
+	level=debug 
+	msg="Error for operation endpoint[api-contacorrente, api-contacorrente:api-contacorrente/saldo/11122233344/0123456789] was: received non-successful status code in response: 429" 
+	app_id=api-transferencia 
+	instance=deployment-api-transferencia-6cd99bb649-khljm 
+	scope=dapr.runtime 
+	type=log 
+	ver=1.16.4
+	
+time="2025-12-19T17:32:42.284825756Z" 
+	level=info 
+	msg="Recovered processing operation endpoint[api-contacorrente, api-contacorrente:api-contacorrente/saldo/11122233344/0123456789] after 10 attempts" 
+	app_id=api-transferencia 
+	instance=deployment-api-transferencia-6cd99bb649-khljm 
+	scope=dapr.runtime 
+	type=log 
+	ver=1.16.4
+	
+time="2025-12-19T17:32:42.284863946Z" 
+	level=info 
+	msg="HTTP API Called" 
+	app_id=api-transferencia 
+	code=200 
+	duration=9018 
+	instance=deployment-api-transferencia-6cd99bb649-khljm 
+	method="GET /api-contacorrente/saldo/11122233344/0123456789" 
+	scope=dapr.runtime.http-info 
+	size=28 
+	type=log 
+	ver=1.16.4
+	
+time="2025-12-19T17:32:42.2869694Z" 
+	level=info 
+	msg="HTTP API Called" 
+	app_id=api-transferencia 
+	code=200 
+	duration=1 
+	instance=deployment-api-transferencia-6cd99bb649-khljm 
+	method="POST /v1.0/invoke/httpenpoint-service-transferencia/method/" 
+	scope=dapr.runtime.http-info 
+	size=280 
+	type=log 
+	ver=1.16.4

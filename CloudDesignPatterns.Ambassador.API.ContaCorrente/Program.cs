@@ -1,6 +1,7 @@
 using CloudDesignPatterns.Ambassador.API.ContaCorrente.Business;
 using CloudDesignPatterns.Ambassador.API.ContaCorrente.Business.Interface;
 using Microsoft.OpenApi.Models;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,24 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddSingleton<ISaldo, Saldo>();
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+    {
+        return RateLimitPartition.GetFixedWindowLimiter("GlobalLimiter", _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 10,
+            Window = TimeSpan.FromSeconds(15),
+            QueueLimit = 0
+        });
+    });
+    options.RejectionStatusCode = 429;
+});
+
+
 var app = builder.Build();
+
+app.UseRateLimiter();
 
 app.UseSwagger();
 app.UseSwaggerUI();

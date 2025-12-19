@@ -3,7 +3,6 @@ using CloudDesignPatterns.Ambassador.Service.ServicoTransferencia.Contract;
 using CoreWCF;
 using CoreWCF.Configuration;
 using CoreWCF.Description;
-using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,23 +17,7 @@ builder.Services.AddSingleton<IServiceBehavior, ServiceDebugBehavior>(behavior =
     return debugBehavior;
 });
 
-builder.Services.AddRateLimiter(options =>
-{
-    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
-    {
-        return RateLimitPartition.GetFixedWindowLimiter("GlobalLimiter", _ => new FixedWindowRateLimiterOptions
-        {
-            PermitLimit = 10,
-            Window = TimeSpan.FromSeconds(15),
-            QueueLimit = 0
-        });
-    });
-    options.RejectionStatusCode = 429;
-});
-
 var app = builder.Build();
-
-app.UseRateLimiter();
 
 app.UseServiceModel(builder =>
 {
@@ -46,9 +29,5 @@ app.UseServiceModel(builder =>
     var serviceMetadataBehavior = app.Services.GetRequiredService<ServiceMetadataBehavior>();
     serviceMetadataBehavior.HttpGetEnabled = true;
 });
-
-
-
-
 
 app.Run();

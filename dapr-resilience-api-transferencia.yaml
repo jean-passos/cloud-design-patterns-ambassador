@@ -1,0 +1,23 @@
+apiVersion: dapr.io/v1alpha1
+kind: Resiliency
+metadata:
+  name: resiliency-api-transferencia
+scopes:
+  - api-transferencia
+spec:
+  policies:
+    timeouts:
+      waitResponseTimeDefault: 30s
+
+    retries:
+      retry429Response:
+        duration: 1s
+        maxRetries: 30
+        matching:
+          httpStatusCodes: '429'
+    
+  targets:
+    apps:
+       api-contacorrente:
+         timeout: waitResponseTimeDefault
+         retry: retry429Response
