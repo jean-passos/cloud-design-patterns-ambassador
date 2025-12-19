@@ -20,6 +20,8 @@ Nos deployments do k8s as portas expostas localmente para teste sao
 ---
 Para testar a resiliencia
 1. Configurar o circuit breaker (no Dapr) apontando para a api-transferencia
-2. Colocado rate limit na aplicacao que simula servico de transferencia
+2. Colocado rate limit na aplicacao que simula faz a consulta de saldo
 3. Observar os logs da api e do sidecar
-4. Observar se o retorno vem para a api-transferencia depois do periodo do rate limit
+   kubectl logs <host da api transferencia> -f
+   kubectl logs <host da api transferencia> daprd -f
+5. Observar se o retorno vem para a api-transferencia depois do periodo do rate limit
