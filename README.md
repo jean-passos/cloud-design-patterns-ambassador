@@ -29,4 +29,4 @@ Para testar a resiliencia
 O tópico sns-transferencia pode ser utilizado para notificar outros sistemas sobre a transferencia
 ---
 As credenciais da aplicação para acesso a servicos AWS estao associadas a um IAM user, foi gerada uma access key para este usuario apenas para simplicidade do processo (estamos rodando localmente dentro do k8s do docker), mas para nao haver vazamento de credenciais e uso indevido da chave elas foram incluidas em uma secret no k8s, e o arquivo que contém estas secrets de deploy foi incluido no .gitignore
-Algumas informações nao necessariamente sao sensiveis, mas nao é recomendavel expo-las, como por exemplo, o numero da conta AWS. Portanto o dados que contem o numero da conta AWS estao no config map (k8s), mas para nao "subir" para o git foi incluido tambem no .gitignore
+Algumas informações nao necessariamente sao sensiveis, mas nao é recomendavel expo-las, como por exemplo, o numero da conta AWS. Portanto o dados que contem o numero da conta AWS tambem foram incluidas na secret k8s
