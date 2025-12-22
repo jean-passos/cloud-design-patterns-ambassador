@@ -27,3 +27,5 @@ Para testar a resiliencia
 5. Observar se o retorno vem para a api-transferencia depois do periodo do rate limit
 ---
 O tópico sns-transferencia pode ser utilizado para notificar outros sistemas sobre a transferencia
+---
+As credenciais da aplicação para acesso a servicos AWS estao associadas a um IAM user, foi gerada uma access key para este usuario apenas para simplicidade do processo (estamos rodando localmente dentro do k8s do docker), mas para nao haver vazamento de credenciais e uso indevido da chave elas foram incluidas em uma secret no k8s, e o arquivo que contém estas secrets de deploy foi incluido no .gitignore
