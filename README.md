@@ -25,3 +25,5 @@ Para testar a resiliencia
    kubectl logs <host da api transferencia> -f
    kubectl logs <host da api transferencia> daprd -f
 5. Observar se o retorno vem para a api-transferencia depois do periodo do rate limit
+---
+O tópico sns-transferencia pode ser utilizado para notificar outros sistemas sobre a transferencia
